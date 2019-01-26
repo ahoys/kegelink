@@ -1,0 +1,22 @@
+{
+  "extends": [
+    "tslint:latest",
+    "tslint-plugin-prettier",
+    "tslint-config-prettier"
+  ],
+  "rules": {
+    "prettier": [
+      true,
+      "./.prettierrc"
+    ],
+    "no-console": false,
+    "no-unused-expression": [true, "allow-new"]
+  },
+  "linterOptions": {
+    "exclude": [
+      "**/__tests__/*",
+      "**/dist/*",
+      "**/node_modules/*"
+    ]
+  }
+}
