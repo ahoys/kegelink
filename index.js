@@ -103,6 +103,12 @@ discordClient.on('message', Message => {
   }
 });
 
+discordClient.on('error', () => {
+  // This usually happens when the connection is lost.
+  // Only way to recover is to re-login asap.
+  logInDiscord();
+});
+
 const logInIrc = () => {
   ircClient = new Irc.Client(settings.irc_server, settings.irc_nickname, {
     userName: 'Kegelink',
