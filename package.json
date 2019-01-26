@@ -5,30 +5,20 @@
   "author": "Ari Höysniemi",
   "license": "MIT",
   "scripts": {
-    "build": "webpack --progress --config webpack.config.js",
-    "test": "cross-env NODE_ENV=testing jest",
-    "lint": "./node_modules/.bin/tslint --project ./ --fix ./src/**"
+    "start": "node index.js",
+    "test": "jest",
+    "lint": "eslint ./ --fix"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.13",
-    "@types/node": "^10.12.18",
-    "clean-webpack-plugin": "^1.0.1",
-    "cross-env": "^5.2.0",
+    "eslint": "^5.12.1",
+    "eslint-config-prettier": "^4.0.0",
+    "eslint-plugin-prettier": "^3.0.1",
     "jest": "^24.0.0",
-    "prettier": "^1.16.1",
-    "ts-jest": "^23.10.5",
-    "ts-loader": "^5.3.3",
-    "tslint": "^5.12.1",
-    "tslint-config-prettier": "^1.17.0",
-    "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.2.4",
-    "typescript-tslint-plugin": "^0.3.0",
-    "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1"
+    "prettier": "^1.16.1"
   },
   "dependencies": {
     "discord.js": "^11.4.2",
-    "logscribe": "^2.0.2",
-    "node-irc": "^0.0.4"
+    "irc-upd": "^0.10.0",
+    "logscribe": "^2.0.2"
   }
 }

@@ -1,8 +1,9 @@
 {
-  "irc_server": "",
-  "irc_port": "",
-  "irc_channel": "",
-  "irc_password": "",
+  "irc_server": "127.0.0.1",
+  "irc_port": "6667",
+  "irc_channel": "#test",
+  "irc_password": "password",
   "irc_nickname": "Kegelink",
-  "dis_channel": ""
+  "dis_guild": "277194040401854464",
+  "dis_channel": "277194040401854464"
 }

@@ -1,4 +1,4 @@
 node_modules/
-build/
 auth.json
 yarn-error.log
+application_*
