@@ -89,10 +89,14 @@ discordClient.on('ready', () => {
 discordClient.on('message', Message => {
   try {
     if (Message.author.id !== discordClient.user.id) {
-      ircClient.say(
-        settings.irc_channel,
-        `${Message.author.username}: ${Message.content}`
-      );
+      if (Message.isMentioned(discordClient.user.id)) {
+        doDiscordAction(Message.content);
+      } else {
+        ircClient.say(
+          settings.irc_channel,
+          `${Message.author.username}: ${Message.content}`
+        );
+      }
     }
   } catch (e) {
     lp(e);
@@ -100,7 +104,7 @@ discordClient.on('message', Message => {
 });
 
 const logInIrc = () => {
-  ircClient = new Irc.Client(settings.irc_server, `ch-${discordChannel.name}`, {
+  ircClient = new Irc.Client(settings.irc_server, settings.irc_nickname, {
     userName: 'Kegelink',
     realName: 'Ketsune "Gerald" Link',
     channels: [settings.irc_channel],
@@ -115,10 +119,6 @@ const logInIrc = () => {
     try {
       p('Irc connection is ready.');
       ircClient.join(settings.irc_channel);
-      ircClient.say(
-        settings.irc_channel,
-        'Pim pom! Keijoyhteysväylä rakennettu!'
-      );
     } catch (e) {
       lp(e);
     }
@@ -139,6 +139,28 @@ const logInIrc = () => {
       console.log(e);
     }
   });
+};
+
+/**
+ * Executes an action if found.
+ * These are Discord only.
+ * @param {Message content} content - Message.content
+ */
+const doDiscordAction = content => {
+  const str = content
+    .toString()
+    .trim()
+    .toLowerCase()
+    .split(' ');
+  const a = str[1] ? str[1] : '';
+  if (['who', 'kuka'].includes(a)) {
+    const msg =
+      'Hei! Nimeni on Ketsune "Gerald" Link. ' +
+      'Voitte kutsua minua lyhyemmin Kegelinkiksi. ' +
+      'Tulin tänne yhdistämään Discordin ja irkin!';
+    ircClient.say(settings.irc_channel, msg);
+    discordChannel.send(msg);
+  }
 };
 
 logInDiscord();
