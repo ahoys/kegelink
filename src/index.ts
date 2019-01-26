@@ -1,30 +1,38 @@
 import { existsSync, readFileSync } from 'fs';
-import logscribe, { p } from 'logscribe';
+import logscribe from 'logscribe';
 import { resolve } from 'path';
 
-// const { p } = logscribe('General');
+interface Iauth {
+  [key:string]: string;
+  token: string;
+  id: string;
+  owner: string;
+}
+
+const auth: Iauth = {
+  token: '',
+  id: '',
+  owner: '',
+}
 
 /**
  * Read authentication data.
  */
-const auth = { id: '', owner: '', token: '' };
 const authPath = resolve('./configs/auth.json');
 if (existsSync(authPath)) {
   const obj = JSON.parse(readFileSync(authPath, 'utf8'));
-  if (obj.token && obj.id && obj.owner) {
-    auth.token = obj.token || '';
-    auth.id = obj.id || '';
-    auth.owner = obj.owner || '';
-    logscribe('Authentication', '\x1b[32m').p(
-      `Successfully read auth.json for ${auth.id}.`
-    );
-  } else {
-    logscribe('Authentication', '\x1b[31m').lp('Failed to read auth.json.');
-    logscribe('Authentication', '\x1b[31m').p(
-      'Create configs/auth.json and add token, id and owner into it.'
-    );
-    process.exit(1);
-  }
+  Object.keys(auth).forEach((key) => {
+    if (obj[key]) {
+      auth[key] = obj[key];
+    }
+  });
+  logscribe('Authentication', '\x1b[32m').p(
+    `Successfully read auth.json for ${auth.id}.`
+  );
+} else {
+  logscribe('Authentication', '\x1b[31m')
+    .lp('configs/auth.json was not found. Can\'t continue.');
+  process.exit(1);
 }
 
 interface Isettings {
@@ -37,9 +45,6 @@ interface Isettings {
   dis_channel: string;
 }
 
-/**
- * Read configs data.
- */
 const settings: Isettings = {
   irc_server: '',
   irc_port: '',
@@ -48,6 +53,10 @@ const settings: Isettings = {
   irc_nickname: '',
   dis_channel: ''
 };
+
+/**
+ * Read settings data.
+ */
 const settingsPath = resolve('./configs/settings.json');
 if (existsSync(settingsPath)) {
   const obj = JSON.parse(readFileSync(settingsPath, 'utf8'));
@@ -56,6 +65,9 @@ if (existsSync(settingsPath)) {
       settings[key] = obj[key].toString();
     }
   });
+  logscribe('Settings', '\x1b[32m').p(
+    `Successfully read settings.json.`
+  );
 } else {
   logscribe('Settings', '\x1b[31m')
     .lp('configs/settings.json was not found. Using defaults instead.');
