@@ -19,6 +19,7 @@ if (existsSync(authPath)) {
       `Successfully read auth.json for ${auth.id}.`
     );
   } else {
-    logscribe('Authentication', '\x1b[31m').p('Failed to read auth.json.');
+    logscribe('Authentication', '\x1b[31m').lp('Failed to read auth.json.');
+    process.exit(1);
   }
 }
