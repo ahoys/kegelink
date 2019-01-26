@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'fs';
-import logscribe from 'logscribe';
+import logscribe, { p } from 'logscribe';
 import { resolve } from 'path';
 
 // const { p } = logscribe('General');
@@ -25,4 +25,38 @@ if (existsSync(authPath)) {
     );
     process.exit(1);
   }
+}
+
+interface Isettings {
+  [key:string]: string;
+  irc_server: string;
+  irc_port: string;
+  irc_channel: string;
+  irc_password: string;
+  irc_nickname: string;
+  dis_channel: string;
+}
+
+/**
+ * Read configs data.
+ */
+const settings: Isettings = {
+  irc_server: '',
+  irc_port: '',
+  irc_channel: '',
+  irc_password: 'Kegelink',
+  irc_nickname: '',
+  dis_channel: ''
+};
+const settingsPath = resolve('./configs/settings.json');
+if (existsSync(settingsPath)) {
+  const obj = JSON.parse(readFileSync(settingsPath, 'utf8'));
+  Object.keys(settings).forEach((key) => {
+    if (obj[key]) {
+      settings[key] = obj[key].toString();
+    }
+  });
+} else {
+  logscribe('Settings', '\x1b[31m')
+    .lp('configs/settings.json was not found. Using defaults instead.');
 }
