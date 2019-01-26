@@ -101,6 +101,8 @@ discordClient.on('message', Message => {
 
 const logInIrc = () => {
   ircClient = new Irc.Client(settings.irc_server, `ch-${discordChannel.name}`, {
+    userName: 'Kegelink',
+    realName: 'Ketsune "Gerald" Link',
     channels: [settings.irc_channel],
     port: settings.irc_port,
     password: settings.irc_password,
@@ -113,6 +115,10 @@ const logInIrc = () => {
     try {
       p('Irc connection is ready.');
       ircClient.join(settings.irc_channel);
+      ircClient.say(
+        settings.irc_channel,
+        'Pim pom! Keijoyhteysväylä rakennettu!'
+      );
     } catch (e) {
       lp(e);
     }
