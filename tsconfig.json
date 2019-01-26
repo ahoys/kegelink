@@ -11,6 +11,7 @@
     "outDir": "./build",
     "baseUrl": ".",
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "plugins": [
       {
         "name": "typescript-tslint-plugin"
