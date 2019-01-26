@@ -88,7 +88,10 @@ discordClient.on('ready', () => {
 
 discordClient.on('message', Message => {
   try {
-    if (Message.author.id !== discordClient.user.id) {
+    if (
+      Message.channel.id === discordChannel.id &&
+      Message.author.id !== discordClient.user.id
+    ) {
       if (Message.isMentioned(discordClient.user.id)) {
         doDiscordAction(Message.content);
       } else {
@@ -130,9 +133,9 @@ const logInIrc = () => {
     }
   });
 
-  ircClient.addListener(`message${settings.irc_channel}`, (from, message) => {
+  ircClient.addListener('message', (nick, to, text, message) => {
     try {
-      discordChannel.send(`<${from}> ${message}`);
+      discordChannel.send(`<${nick}> ${text}`);
     } catch (e) {
       lp(e);
     }
