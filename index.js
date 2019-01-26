@@ -122,6 +122,7 @@ const logInIrc = () => {
     autoConnect: false,
     autoRejoin: true,
     autoRenick: true,
+    encoding: 'utf-8',
   });
   ircClient.connect();
   ircClient.addListener('registered', () => {
