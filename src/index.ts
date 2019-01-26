@@ -20,6 +20,9 @@ if (existsSync(authPath)) {
     );
   } else {
     logscribe('Authentication', '\x1b[31m').lp('Failed to read auth.json.');
+    logscribe('Authentication', '\x1b[31m').p(
+      'Create configs/auth.json and add token, id and owner into it.'
+    );
     process.exit(1);
   }
 }
