@@ -1,9 +1,23 @@
 {
   "irc_server": "127.0.0.1",
   "irc_port": "6667",
-  "irc_channel": "#test",
   "irc_password": "password",
   "irc_nickname": "Kegelink",
-  "dis_guild": "277194040401854464",
-  "dis_channel": "315475275192467466"
+  "irc_userName": "Kegelink",
+  "irc_realName": "Ketsune \"Gerald\" Link",
+  "irc_encoding": "utf-8",
+  "links": [
+    {
+      "dis_guild": "277194040401854464",
+      "dis_channel": "315475275192467466",
+      "irc_channel": "#test1",
+      "irc_channel_pw": ""
+    },
+    {
+      "dis_guild": "277194040401854464",
+      "dis_channel": "277194040401854464",
+      "irc_channel": "#test2",
+      "irc_channel_pw": "pass"
+    }
+  ]
 }
