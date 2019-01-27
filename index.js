@@ -233,7 +233,11 @@ const onIRCRegistered = () => {
 const onIRCMessage = (nick, to, text) => {
   try {
     const link = links.find(l => l.irc_channel === to);
-    if (link && text.toString().trim() !== '') {
+    if (
+      link &&
+      text.toString().trim() !== '' &&
+      !nick.includes(settings.irc_nickname)
+    ) {
       // Success!
       link.Channel.send(`<${nick}> ${text}`);
     }
@@ -361,14 +365,12 @@ const handleBotMentions = (link, Message) => {
         'Passelia',
         'rahinivontaa',
         'narun halkaisua',
-      ]
+      ];
       const rN0 = Math.floor(Math.random() * part0.length);
       const rN1 = Math.floor(Math.random() * part1.length);
       const hobby = `${part0[rN0]} ${part1[rN1]}`;
       const msg =
-        `Olen ${
-          settings.irc_realName
-        }, eli ${settings.irc_nickname}. ` +
+        `Olen ${settings.irc_realName}, eli ${settings.irc_nickname}. ` +
         `Harrastan purjelentämistä, pötköttelyä ja ${hobby}. ` +
         'Tehtäväni täällä on yhdistää Discord ja IRC.';
       Message.channel.send(msg);
