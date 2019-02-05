@@ -262,7 +262,7 @@ const logInIRC = () => {
         ? l.irc_channel
         : `${l.irc_channel} ${l.irc_channel_pw}`
     );
-    p(`IRC connecting to: ${linkedChannels}`);
+    p(`IRC connecting to: ${linkedChannels}...`);
     ircClient = undefined;
     ircClient = new Irc.Client(
       settings.irc_server,
@@ -284,7 +284,7 @@ const logInIRC = () => {
       // Event: Registered.
       ircClient.addListener('message', onIRCMessage);
       ircClient.addListener('error', onIRCError);
-      p('IRC connection is ready.');
+      p('IRC connection is ready!');
     });
   } catch (e) {
     lp('logInIRC failed.', e);
