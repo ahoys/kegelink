@@ -280,10 +280,11 @@ const logInIRC = () => {
         retryDelay: settings.irc_retry_delay,
       }
     );
+    // Remove old listeners to avoid echoing.
+    ircClient.removeAllListeners('message');
+    ircClient.removeAllListeners('error');
     ircClient.connect(settings.irc_retry_count, () => {
       // Event: Registered.
-      ircClient.removeAllListeners('message');
-      ircClient.removeAllListeners('error');
       ircClient.addListener('message', onIRCMessage);
       ircClient.addListener('error', onIRCError);
       p('IRC connection is ready!');
