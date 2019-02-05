@@ -239,7 +239,14 @@ const onIRCMessage = (nick, to, text) => {
       !nick.includes(settings.irc_nickname)
     ) {
       // Success!
-      link.Channel.send(`<${nick}> ${text}`);
+      link.Channel.send(`<${nick}> ${text}`).catch(e => {
+        lp(
+          `Sending a message to a discord channel (${
+            link.Channel.name
+          }) failed.`,
+          e
+        );
+      });
     }
   } catch (e) {
     lp('onIRCMessage failed.', e);
@@ -305,7 +312,14 @@ const handleOwnerActions = Message => {
     // Close the bot.
     if (['exit', 'close'].includes(action[0])) {
       p('Author triggered exit.');
-      Message.channel.send('Goodbye.');
+      Message.channel.send('Goodbye.').catch(e => {
+        lp(
+          `Sending a message to a discord channel (${
+            Message.channel.name
+          }) failed.`,
+          e
+        );
+      });
       process.exit(0);
     }
     // Reply bot version.
@@ -315,7 +329,14 @@ const handleOwnerActions = Message => {
       if (fs.existsSync(packagePath)) {
         const obj = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
         if (obj && typeof obj.version === 'string') {
-          Message.channel.send(obj.version);
+          Message.channel.send(obj.version).catch(e => {
+            lp(
+              `Sending a message to a discord channel (${
+                Message.channel.name
+              }) failed.`,
+              e
+            );
+          });
         }
       }
     }
@@ -323,19 +344,37 @@ const handleOwnerActions = Message => {
     if (['settings', 'links', 'channels'].includes(action[0])) {
       p('Author triggered channels.');
       links.forEach(link => {
-        Message.channel.send(
-          `${link.Guild.name}/${link.Channel.name} <> ${link.irc_channel}`
-        );
+        Message.channel
+          .send(
+            `${link.Guild.name}/${link.Channel.name} <> ${link.irc_channel}`
+          )
+          .catch(e => {
+            lp(
+              `Sending a message to a discord channel (${
+                Message.channel.name
+              }) failed.`,
+              e
+            );
+          });
       });
     }
     // Pings Discord.
     if (['ping'].includes(action[0])) {
       p('Author triggered ping.');
-      Message.channel.send(
-        `Discord: ${
-          discordClient.ping
-        }ms. IRC error balance ${ircErrorBalance}.`
-      );
+      Message.channel
+        .send(
+          `Discord: ${
+            discordClient.ping
+          }ms. IRC error balance ${ircErrorBalance}.`
+        )
+        .catch(e => {
+          lp(
+            `Sending a message to a discord channel (${
+              Message.channel.name
+            }) failed.`,
+            e
+          );
+        });
     }
   } catch (e) {
     lp('handleOwnerActions failed.', e);
@@ -373,14 +412,28 @@ const handleBotMentions = (link, Message) => {
         `Olen ${settings.irc_realName}, eli ${settings.irc_nickname}. ` +
         `Harrastan purjelentämistä, pötköttelyä ja ${hobby}. ` +
         'Tehtäväni täällä on yhdistää Discord ja IRC.';
-      Message.channel.send(msg);
+      Message.channel.send(msg).catch(e => {
+        lp(
+          `Sending a message to a discord channel (${
+            Message.channel.name
+          }) failed.`,
+          e
+        );
+      });
       ircClient.say(link.irc_channel, msg);
     }
     // Fu.
     if (['fu'].includes(action[1])) {
       p('Fu triggered.');
       const msg = 'fu2';
-      Message.channel.send(msg);
+      Message.channel.send(msg).catch(e => {
+        lp(
+          `Sending a message to a discord channel (${
+            Message.channel.name
+          }) failed.`,
+          e
+        );
+      });
       ircClient.say(link.irc_channel, msg);
     }
   } catch (e) {
