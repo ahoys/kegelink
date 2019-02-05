@@ -282,6 +282,8 @@ const logInIRC = () => {
     );
     ircClient.connect(settings.irc_retry_count, () => {
       // Event: Registered.
+      ircClient.removeAllListeners('message');
+      ircClient.removeAllListeners('error');
       ircClient.addListener('message', onIRCMessage);
       ircClient.addListener('error', onIRCError);
       p('IRC connection is ready!');
