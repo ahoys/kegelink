@@ -274,6 +274,7 @@ const logInIRC = () => {
       autoRejoin: true,
       autoRenick: true,
       encoding: settings.irc_encoding,
+      retryDelay: settings.irc_retry_delay,
     });
     ircClient.connect(settings.irc_retry_count, () => {
       // Event: Registered.
