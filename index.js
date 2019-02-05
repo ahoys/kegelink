@@ -211,20 +211,6 @@ discordClient.on('error', () => {
 // IRC ------------------------------------------------------------------------
 
 /**
- * Joins to the linked irc-channels.
- */
-const onIRCRegistered = () => {
-  try {
-    if (ircErrorBalance) {
-      ircErrorBalance -= 1;
-    }
-    p('IRC connection is ready.');
-  } catch (e) {
-    lp('onIRCRegistered failed.', e);
-  }
-};
-
-/**
  * When a new IRC message is read.
  * @param {string} nick - Author of the message.
  * @param {string} to - Channel of the message.
@@ -277,6 +263,7 @@ const logInIRC = () => {
         : `${l.irc_channel} ${l.irc_channel_pw}`
     );
     p(`IRC connecting to: ${linkedChannels}`);
+    ircClient = undefined;
     ircClient = new Irc.Client(settings.irc_server, settings.irc_nickname, {
       userName: settings.irc_userName,
       realName: settings.irc_realName,
@@ -288,10 +275,12 @@ const logInIRC = () => {
       autoRenick: true,
       encoding: settings.irc_encoding,
     });
-    ircClient.connect();
-    ircClient.addListener('registered', onIRCRegistered);
-    ircClient.addListener('message', onIRCMessage);
-    ircClient.addListener('error', onIRCError);
+    ircClient.connect(settings.irc_retry_count, () => {
+      // Event: Registered.
+      ircClient.addListener('message', onIRCMessage);
+      ircClient.addListener('error', onIRCError);
+      p('IRC connection is ready.');
+    });
   } catch (e) {
     lp('logInIRC failed.', e);
   }

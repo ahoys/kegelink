@@ -6,6 +6,7 @@
   "irc_userName": "Kegelink",
   "irc_realName": "Ketsune \"Gerald\" Link",
   "irc_encoding": "utf-8",
+  "irc_retry_count": null,
   "links": [
     {
       "dis_guild": "277194040401854464",
