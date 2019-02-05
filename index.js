@@ -264,18 +264,22 @@ const logInIRC = () => {
     );
     p(`IRC connecting to: ${linkedChannels}`);
     ircClient = undefined;
-    ircClient = new Irc.Client(settings.irc_server, settings.irc_nickname, {
-      userName: settings.irc_userName,
-      realName: settings.irc_realName,
-      channels: linkedChannels,
-      port: settings.irc_port,
-      password: settings.irc_password,
-      autoConnect: false,
-      autoRejoin: true,
-      autoRenick: true,
-      encoding: settings.irc_encoding,
-      retryDelay: settings.irc_retry_delay,
-    });
+    ircClient = new Irc.Client(
+      settings.irc_server,
+      settings.irc_nickname.trim(),
+      {
+        userName: settings.irc_userName,
+        realName: settings.irc_realName,
+        channels: linkedChannels,
+        port: settings.irc_port,
+        password: settings.irc_password,
+        autoConnect: false,
+        autoRejoin: true,
+        autoRenick: true,
+        encoding: settings.irc_encoding,
+        retryDelay: settings.irc_retry_delay,
+      }
+    );
     ircClient.connect(settings.irc_retry_count, () => {
       // Event: Registered.
       ircClient.addListener('message', onIRCMessage);
