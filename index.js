@@ -216,8 +216,10 @@ discordClient.on('error', () => {
  */
 const translateDiscordMessageToIRC = Message => {
   try {
-    const { author, content, attachments } = Message;
+    const { author, content, attachments, mentions } = Message;
+    // Remove new lines.
     let str = `<${author.username}> ${content.replace(/\r?\n/g, ' ')}`;
+    // Translate attachments to links.
     if (attachments.size) {
       attachments.array().forEach((att, i) => {
         const prefix = content[0] ? ' ' : '';
@@ -228,6 +230,12 @@ const translateDiscordMessageToIRC = Message => {
           i === 0
             ? `${prefix}[${filename}][${filesize}KB] ${att.url}`
             : `, [${filename}][${filesize}KB] ${att.url}`;
+      });
+    }
+    // Translate <@123...> mentions to usernames.
+    if (mentions && mentions.users && mentions.users.size) {
+      mentions.users.array().forEach(User => {
+        str = str.replace(`<@${User.id}>`, User.username);
       });
     }
     return str;
