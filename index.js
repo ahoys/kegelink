@@ -232,10 +232,22 @@ const translateDiscordMessageToIRC = Message => {
             : `, [${filename}][${filesize}KB] ${att.url}`;
       });
     }
-    // Translate <@123...> mentions to usernames.
+    // Translate <@123...> user mentions to usernames.
     if (mentions && mentions.users && mentions.users.size) {
       mentions.users.array().forEach(User => {
         str = str.replace(`<@${User.id}>`, User.username);
+      });
+    }
+    // Translate <@123...> role mentions to usernames.
+    if (mentions && mentions.roles && mentions.roles.size) {
+      mentions.roles.array().forEach(Role => {
+        str = str.replace(`<@&${Role.id}>`, Role.name);
+      });
+    }
+    // Translate <@123...> channel mentions to usernames.
+    if (mentions && mentions.channels && mentions.channels.size) {
+      mentions.channels.array().forEach(Channel => {
+        str = str.replace(`<#${Channel.id}>`, `#${Channel.name}`);
       });
     }
     return str;
