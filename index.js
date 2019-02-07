@@ -172,7 +172,6 @@ discordClient.on('message', Message => {
     const { guild, author, channel, content } = Message;
     // Don't repeat your own messages!
     if (author && author.id !== discordClient.user.id) {
-      const msg = `<${author.username}> ${content}`;
       if (guild && channel) {
         // We are only interested in validated links.
         const link = links.find(
@@ -180,7 +179,10 @@ discordClient.on('message', Message => {
         );
         if (link) {
           // Success!
-          ircClient.say(link.irc_channel, msg);
+          ircClient.say(
+            link.irc_channel,
+            translateDiscordMessageToIRC(Message)
+          );
           if (Message.isMentioned(discordClient.user)) {
             handleBotMentions(link, Message);
           }
@@ -207,6 +209,20 @@ discordClient.on('error', () => {
     lp('on.error failed.', e);
   }
 });
+
+/**
+ * Translates Discord messages to more suitable for IRC.
+ * @param {object} Message - Discord.js Message object.
+ */
+const translateDiscordMessageToIRC = Message => {
+  try {
+    const { author, content } = Message;
+    const str = `<${author.username}> ${content.replace(/\r?\n/g, ' ')}`;
+    return str;
+  } catch (e) {
+    lp('translateDiscordMessage failed.', e);
+  }
+};
 
 // IRC ------------------------------------------------------------------------
 
