@@ -241,7 +241,7 @@ const translateDiscordMessageToIRC = Message => {
     // Translate <@123...> role mentions to usernames.
     if (mentions && mentions.roles && mentions.roles.size) {
       mentions.roles.array().forEach(Role => {
-        str = str.replace(`<@&${Role.id}>`, Role.name);
+        str = str.replace(`<@&${Role.id}>`, `@&${Role.name}`);
       });
     }
     // Translate <@123...> channel mentions to usernames.
