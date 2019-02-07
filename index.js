@@ -216,8 +216,20 @@ discordClient.on('error', () => {
  */
 const translateDiscordMessageToIRC = Message => {
   try {
-    const { author, content } = Message;
-    const str = `<${author.username}> ${content.replace(/\r?\n/g, ' ')}`;
+    const { author, content, attachments } = Message;
+    let str = `<${author.username}> ${content.replace(/\r?\n/g, ' ')}`;
+    if (attachments.size) {
+      attachments.array().forEach((att, i) => {
+        const prefix = content[0] ? ' ' : '';
+        const filename =
+          att.filename === 'unknown.png' ? 'PrintScreen' : att.filename;
+        const filesize = att.filesize % 1000;
+        str +=
+          i === 0
+            ? `${prefix}[${filename}][${filesize}KB] ${att.url}`
+            : `, [${filename}][${filesize}KB] ${att.url}`;
+      });
+    }
     return str;
   } catch (e) {
     lp('translateDiscordMessage failed.', e);
