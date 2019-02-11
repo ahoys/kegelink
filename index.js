@@ -151,7 +151,7 @@ discordClient.on('ready', () => {
   try {
     p('Discord connection is ready.');
     mapLinks(discordClient);
-    if (links[0]) {
+    if (links[0] && !ircClient) {
       // Discord is ready. Log-in to IRC.
       logInIRC();
     } else {
