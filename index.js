@@ -374,17 +374,35 @@ const handleOwnerActions = Message => {
       .toLowerCase()
       .split(' ');
     // Close the bot.
+    if (['help'].includes(action[0])) {
+      p('Author triggered help.');
+      Message.channel
+        .send('Commands: help, exit, version, links, ping, reconnect.')
+        .catch(e => {
+          lp(
+            `Sending a message to a discord channel (${
+              Message.channel.name
+            }) failed.`,
+            e
+          );
+        });
+    }
+    // Close the bot.
     if (['exit', 'close'].includes(action[0])) {
       p('Author triggered exit.');
-      Message.channel.send('Goodbye.').catch(e => {
-        lp(
-          `Sending a message to a discord channel (${
-            Message.channel.name
-          }) failed.`,
-          e
-        );
-      });
-      process.exit(0);
+      Message.channel
+        .send('Goodbye.')
+        .then(() => {
+          process.exit(0);
+        })
+        .catch(e => {
+          lp(
+            `Sending a message to a discord channel (${
+              Message.channel.name
+            }) failed.`,
+            e
+          );
+        });
     }
     // Reply bot version.
     if (['version'].includes(action[0])) {
