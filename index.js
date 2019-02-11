@@ -88,11 +88,28 @@ if (!settings.links[0]) {
  * Discord.js & Irc
  */
 const Discord = require('discord.js');
-const discordClient = new Discord.Client();
 const Irc = require('irc-upd');
-const links = []; // Validated Discord-to-IRC communication links.
-let timeout, ircClient;
-let ircErrorBalance = 0;
+let discordClient = new Discord.Client(),
+  links,
+  timeout,
+  ircClient,
+  ircErrorBalance;
+
+/**
+ * Initializes the base variables and logs in.
+ */
+const initialize = () => {
+  links = [];
+  timeout = undefined;
+  ircClient = undefined;
+  ircErrorBalance = 0;
+  // Map Discord events.
+  discordClient.on('ready', handleDiscordReady);
+  discordClient.on('message', Message => handleDiscordMessage(Message));
+  discordClient.on('error', handleDiscordError);
+  // IRC will connect when Discord is ready.
+  logInDiscord();
+};
 
 // DISCORD --------------------------------------------------------------------
 
@@ -102,6 +119,7 @@ let ircErrorBalance = 0;
  */
 const logInDiscord = () => {
   try {
+    p('Logging in...');
     discordClient.login(auth.token).catch(() => {
       lp('Failed to log-in Discord!');
       clearTimeout(timeout);
@@ -147,7 +165,7 @@ const mapLinks = Client => {
  * Makes sure the given guilds and channels exist
  * and if so, then triggers the IRC-connection.
  */
-discordClient.on('ready', () => {
+const handleDiscordReady = () => {
   try {
     p('Discord connection is ready.');
     mapLinks(discordClient);
@@ -163,15 +181,15 @@ discordClient.on('ready', () => {
   } catch (e) {
     lp('on.ready failed.', e);
   }
-});
+};
 
 /**
  * Receives a Discord message.
  * Validates it and asks to send it to IRC.
  */
-discordClient.on('message', Message => {
+const handleDiscordMessage = Message => {
   try {
-    const { guild, author, channel, content } = Message;
+    const { guild, author, channel } = Message;
     // Don't repeat your own messages!
     if (author && author.id !== discordClient.user.id) {
       if (guild && channel) {
@@ -197,12 +215,12 @@ discordClient.on('message', Message => {
   } catch (e) {
     lp('on.message failed.', e);
   }
-});
+};
 
 /**
  * Handles discord errors.
  */
-discordClient.on('error', () => {
+const handleDiscordError = () => {
   try {
     // This usually happens when the connection is lost.
     // The only way to recover is to re-login asap.
@@ -210,7 +228,7 @@ discordClient.on('error', () => {
   } catch (e) {
     lp('on.error failed.', e);
   }
-});
+};
 
 /**
  * Translates Discord messages to more suitable for IRC.
@@ -422,6 +440,31 @@ const handleOwnerActions = Message => {
           );
         });
     }
+    // Reconnect Discord & IRC.
+    if (['reconnect'].includes(action[0])) {
+      p('Author triggered reconnect.');
+      if (ircClient) {
+        ircClient.disconnect('Bye!');
+        p('IRC disconnected.');
+      }
+      if (discordClient) {
+        discordClient.destroy().then(() => {
+          discordClient = new Discord.Client();
+          p('Discord connection destroyed.');
+          p('Cooldown of 5 seconds...');
+          setTimeout(() => {
+            initialize();
+          }, 5000);
+        });
+      } else {
+        discordClient = new Discord.Client();
+        p('Discord client did not exist. No need to disconnect.');
+        p('Cooldown of 5 seconds...');
+        setTimeout(() => {
+          initialize();
+        }, 5000);
+      }
+    }
   } catch (e) {
     lp('handleOwnerActions failed.', e);
   }
@@ -488,4 +531,4 @@ const handleBotMentions = (link, Message) => {
 };
 
 // Start the process.
-logInDiscord();
+initialize();
