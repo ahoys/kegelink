@@ -154,6 +154,8 @@ discordClient.on('ready', () => {
     if (links[0] && !ircClient) {
       // Discord is ready. Log-in to IRC.
       logInIRC();
+    } else if (ircClient) {
+      p('No need to log-in to IRC as ircClient already exists.');
     } else {
       p('No valid Discord channels. The bot has no purpose.');
       process.exit(1);
@@ -311,7 +313,6 @@ const logInIRC = () => {
         : `${l.irc_channel} ${l.irc_channel_pw}`
     );
     p(`IRC connecting to: ${linkedChannels}...`);
-    ircClient = undefined;
     ircClient = new Irc.Client(
       settings.irc_server,
       settings.irc_nickname.trim(),
