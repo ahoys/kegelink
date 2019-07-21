@@ -292,7 +292,7 @@ const onIRCMessage = (nick, to, text) => {
       link &&
       text.toString().trim() !== '' &&
       !nick.includes(settings.irc_nickname) &&
-      !filteredIRCusers.includes(nick.toLowerCase())
+      !settings.filteredIRCnicknames.includes(nick.toLowerCase())
     ) {
       // Success!
       link.Channel.send(`<${nick}> ${text}`).catch(e => {
