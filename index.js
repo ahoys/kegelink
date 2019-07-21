@@ -12,8 +12,6 @@ const auth = {
   owner: '',
 };
 
-const filteredIRCusers = ['hanuriveikko'];
-
 /**
  * Read custom authentication data.
  */
@@ -41,6 +39,7 @@ const settings = {
   irc_realName: 'Ketsune "Gerald" Link',
   irc_encoding: 'utf-8',
   links: [], // Mapping of connected channels.
+  filteredIRCnicknames: [],
 };
 
 /**
@@ -380,7 +379,9 @@ const handleOwnerActions = Message => {
     if (['help'].includes(action[0])) {
       p('Author triggered help.');
       Message.channel
-        .send('Commands: help, exit, version, links, ping, reconnect.')
+        .send(
+          'Commands: help, exit, version, links, ping, reconnect, filter <name>, filtered.'
+        )
         .catch(e => {
           lp(
             `Sending a message to a discord channel (${
@@ -486,6 +487,37 @@ const handleOwnerActions = Message => {
         }, 5000);
       }
     }
+    // Filter an IRC-user.
+    if (['filter'].includes(action[0])) {
+      p('Filtering new user:', action[1]);
+      if (action[1]) {
+        const msg = `User (${action[1]}) is now filtered.`;
+        settings.filteredIRCnicknames.push(action[1]);
+        Message.channel.send(msg).catch(e => {
+          lp(
+            `Sending a message to a discord channel (${
+              Message.channel.name
+            }) failed.`,
+            e
+          );
+        });
+      }
+    }
+    // Display filtered users.
+    if (['filtered'].includes(action[0])) {
+      p('Filtered users triggered.');
+      const msg = `The following IRC-users are filtered: ${
+        settings.filteredIRCnicknames
+      }.`;
+      Message.channel.send(msg).catch(e => {
+        lp(
+          `Sending a message to a discord channel (${
+            Message.channel.name
+          }) failed.`,
+          e
+        );
+      });
+    }
   } catch (e) {
     lp('handleOwnerActions failed.', e);
   }
@@ -532,36 +564,7 @@ const handleBotMentions = (link, Message) => {
         );
       });
       ircClient.say(link.irc_channel, msg);
-    } else if (['filtered', 'suodatettu'].includes(action[1])) {
-      // Return who are filtered.
-      p('Filtered users triggered.');
-      const msg = `Seuraavat IRC-käyttäjät ovat filtteröity viestivirrasta: ${filteredIRCusers}.`;
-      Message.channel.send(msg).catch(e => {
-        lp(
-          `Sending a message to a discord channel (${
-            Message.channel.name
-          }) failed.`,
-          e
-        );
-      });
-    } else if (['filter', 'suodata'].includes(action[1])) {
-      // User filtering.
-      p('Filtering new user:', action[2]);
-      if (action[2]) {
-        const msg = `Filteröidään ${action[2]} viestivirrasta.`;
-        filteredIRCusers.push(action[2]);
-        Message.channel.send(msg).catch(e => {
-          lp(
-            `Sending a message to a discord channel (${
-              Message.channel.name
-            }) failed.`,
-            e
-          );
-        });
-      }
-    }
-    // Fu.
-    if (['fu'].includes(action[1])) {
+    } else if (['fu'].includes(action[1])) {
       p('Fu triggered.');
       const msg = 'fu2';
       Message.channel.send(msg).catch(e => {

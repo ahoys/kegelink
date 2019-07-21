@@ -21,5 +21,6 @@
       "irc_channel": "#leveldesign.fi",
       "irc_channel_pw": ""
     }
-  ]
+  ],
+  "filteredIRCnicknames": []
 }
