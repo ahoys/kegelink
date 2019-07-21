@@ -503,6 +503,7 @@ const handleBotMentions = (link, Message) => {
       .trim()
       .toLowerCase()
       .split(' ');
+    p('Action attempt:', action[1]);
     if (['kuka', 'kukas', 'who'].includes(action[1])) {
       // Triggers greeting.
       p('Greeting triggered.');
