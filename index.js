@@ -12,6 +12,8 @@ const auth = {
   owner: '',
 };
 
+const filteredIRCusers = ['hanuriveikko'];
+
 /**
  * Read custom authentication data.
  */
@@ -290,7 +292,8 @@ const onIRCMessage = (nick, to, text) => {
     if (
       link &&
       text.toString().trim() !== '' &&
-      !nick.includes(settings.irc_nickname)
+      !nick.includes(settings.irc_nickname) &&
+      !filteredIRCusers.includes(nick.toLowerCase())
     ) {
       // Success!
       link.Channel.send(`<${nick}> ${text}`).catch(e => {
@@ -500,8 +503,8 @@ const handleBotMentions = (link, Message) => {
       .trim()
       .toLowerCase()
       .split(' ');
-    // Triggers greeting.
     if (['kuka', 'kukas', 'who'].includes(action[1])) {
+      // Triggers greeting.
       p('Greeting triggered.');
       const part0 = ['itämaista', 'länsimaista', 'ulkomaista', 'kotimaista'];
       const part1 = [
@@ -528,6 +531,33 @@ const handleBotMentions = (link, Message) => {
         );
       });
       ircClient.say(link.irc_channel, msg);
+    } else if (['filtered', 'suodatettu'].includes(action[1])) {
+      // Return who are filtered.
+      p('Filtered users triggered.');
+      const msg = `Seuraavat IRC-käyttäjät ovat filtteröity viestivirrasta: ${filteredIRCusers}.`;
+      Message.channel.send(msg).catch(e => {
+        lp(
+          `Sending a message to a discord channel (${
+            Message.channel.name
+          }) failed.`,
+          e
+        );
+      });
+    } else if (['filter', 'suodata'].includes(action[1])) {
+      // User filtering.
+      p('Filtering new user:', action[2]);
+      if (action[2]) {
+        const msg = `Filteröidään ${action[2]} viestivirrasta.`;
+        filteredIRCusers.push(action[2]);
+        Message.channel.send(msg).catch(e => {
+          lp(
+            `Sending a message to a discord channel (${
+              Message.channel.name
+            }) failed.`,
+            e
+          );
+        });
+      }
     }
     // Fu.
     if (['fu'].includes(action[1])) {
