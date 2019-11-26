@@ -302,7 +302,14 @@ const onIRCMessage = (nick, to, text) => {
       !settings.filteredIRCnicknames.includes(nick.toLowerCase())
     ) {
       // Success!
-      link.Channel.send(`<${nick}> ${text}`).catch(e => {
+      let msg = `<${nick}> ${text}`;
+      if (text.startsWith('||') && text.endsWith('||')) {
+        // Spoiler tag.
+        let nText = text;
+        nText = nText.slice(2, nText.length - 2);
+        msg = `||<${nick}> ${nText}||`;
+      }
+      link.Channel.send(msg).catch(e => {
         lp(
           `Sending a message to a discord channel (${
             link.Channel.name
