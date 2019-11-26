@@ -245,7 +245,7 @@ const translateDiscordMessageToIRC = Message => {
       str = `${author.username} ${ncontent.replace(/\r?\n/g, ' ')}`;
     } else {
       // Remove new lines.
-      str = `<${author.username}> ${content.replace(/\r?\n/g, ' ')}`;
+      str = `<${author.username}> ${content.replace(/\n\n+/g, '\n').replace(/\r?\n/g, `\n<${author.username}> `)}`;
     }
     // Translate attachments to links.
     if (attachments.size) {
