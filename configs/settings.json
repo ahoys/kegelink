@@ -10,14 +10,14 @@
   "irc_retry_delay": 5000,
   "links": [
     {
-      "dis_guild": "277194040401854464",
-      "dis_channel": "315475275192467466",
+      "dis_guild": "323102498258812939",
+      "dis_channel": "323102498258812939",
       "irc_channel": "#kaldoaiv",
       "irc_channel_pw": ""
     },
     {
-      "dis_guild": "277194040401854464",
-      "dis_channel": "277194040401854464",
+      "dis_guild": "323102498258812939",
+      "dis_channel": "365509899142299648",
       "irc_channel": "#leveldesign.fi",
       "irc_channel_pw": ""
     }

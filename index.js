@@ -238,8 +238,15 @@ const handleDiscordError = () => {
 const translateDiscordMessageToIRC = Message => {
   try {
     const { author, content, attachments, mentions } = Message;
-    // Remove new lines.
-    let str = `<${author.username}> ${content.replace(/\r?\n/g, ' ')}`;
+    let str = '';
+    if (content.startsWith('_') && content.endsWith('_')) {
+      // A /me message.
+      const ncontent = content.slice(1, content.length - 1);
+      str = `${author.username} ${ncontent.replace(/\r?\n/g, ' ')}`;
+    } else {
+      // Remove new lines.
+      str = `<${author.username}> ${content.replace(/\r?\n/g, ' ')}`;
+    }
     // Translate attachments to links.
     if (attachments.size) {
       attachments.array().forEach((att, i) => {
