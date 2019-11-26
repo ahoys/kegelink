@@ -242,11 +242,17 @@ const translateDiscordMessageToIRC = Message => {
     if (content.startsWith('_') && content.endsWith('_')) {
       // A /me message.
       const ncontent = content.slice(1, content.length - 1);
-      str = `${author.username} ${ncontent.replace(/\r?\n/g, ' ')}`;
+      str = `${author.username} ${ncontent}`;
+    } else if (content.startsWith('||') && content.endsWith('||')) {
+      // A spoiler message.
+      const ncontent = content.slice(2, content.length - 2);
+      str = `<${author.username}> \1,1${ncontent}\`;
     } else {
-      // Remove new lines.
-      str = `<${author.username}> ${content.replace(/\n\n+/g, '\n').replace(/\r?\n/g, `\n<${author.username}> `)}`;
+      // A regular message.
+      str = `<${author.username}> ${content}`;
     }
+    // Handle new lines.
+    str = str.replace(/\n\n+/g, '\n').replace(/\r?\n/g, `\n<${author.username}> `);
     // Translate attachments to links.
     if (attachments.size) {
       attachments.array().forEach((att, i) => {
