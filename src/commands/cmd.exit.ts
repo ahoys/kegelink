@@ -1,7 +1,7 @@
 import { Client, Message } from 'discord.js';
 import { p, lp } from 'logscribe';
 
-export const cmdExit = (message: Message, discordClient: Client) => {
+export const cmdExit = (message: Message, discordClient: Client): void => {
   try {
     p('Executing exit...');
     message.channel

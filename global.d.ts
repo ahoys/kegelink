@@ -15,9 +15,15 @@ interface IIRCOptions {
 
 declare module 'irc-upd' {
   export class Client {
-    constructor(server: string, nick: string, options: IIRCOptions)
-    public addListener: (event: 'message' | 'error', listener: (...args: string[]) => void) => void
-    public removeAllListeners: (event: string) => void
-    public connect: (retryCount: number | null, onRegistered: () => void) => void
+    constructor(server: string, nick: string, options: IIRCOptions);
+    public addListener: (
+      event: 'message' | 'error',
+      listener: (...args: string[]) => void
+    ) => void;
+    public removeAllListeners: (event: string) => void;
+    public connect: (
+      retryCount: number | null,
+      onRegistered: () => void
+    ) => void;
   }
 }
