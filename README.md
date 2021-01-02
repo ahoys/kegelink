@@ -2,9 +2,13 @@
 ### A Discord to IRC communication link.
 # <a href='https://github.com/ahoys/kegelink'><img src='assets/kegelink.png?raw=true' height='192' alt='Kegelink' /></a>
 
-Ketsune "Gerald" Link, alias Kegelink, is a bot that's sole purpose is to connect Kegetys to Discord.
+**Version 2 now released!**
 
-## Setting up a test IRC-server
+Ketsune "Gerald" Link, alias Kegelink, is a bot that's sole purpose was to connect my IRC-pal, Kegetys, to Discord. Now I've rewritten it in TypeScript for everyone's enjoyment.
+
+## Development
+
+### Setting up a test IRC-server
 
 1. [Download and install unrealircd](https://www.unrealircd.org/download)
 2. [Download test server -configs](https://github.com/ahoys/kegelink/blob/master/assets/unrealircd.conf)
