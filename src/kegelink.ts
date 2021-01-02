@@ -10,6 +10,7 @@ import { cmdReconnect } from './commands/cmd.reconnect';
 import { cmdRemoveChannel } from './commands/cmd.removeChannel';
 import { cmdRemoveGuild } from './commands/cmd.removeGuild';
 import { cmdStatus } from './commands/cmd.status';
+import { getDataStore } from './db';
 
 config({ path: __dirname + '/.env' });
 
@@ -43,6 +44,10 @@ mandatoryEnvs.forEach((mEnv) => {
 p(envs);
 
 // Let's go and initialize a new Discord client.
+const filtersIrcDb = getDataStore('filters-irc.nedb');
+const filtersDiscordDb = getDataStore('filters-discord.nedb');
+const guildsDb = getDataStore('guilds.nedb');
+const channelsDb = getDataStore('channels.nedb');
 const discordClient = new DiscordJs.Client();
 let ircClient: undefined | Client;
 
@@ -164,8 +169,8 @@ discordClient.on('message', (Message) => {
             'Supported commands are:\n\n' +
               '`connect <#irc-channel> <optional password>`\nEstablishes a new link. All messages sent to this channel will be sent to IRC and vice versa. You can change the password by re-entering the channel with the new password.\n\n' +
               '`status`\nDisplays all active links and filters of the guild.\n\n' +
-              '`remove_channel`\nRemoves all channel specific configurations, including links and filters.\n\n' +
-              '`remove_guild`\nRemoves all guild specific configurations, including links and filters.\n\n' +
+              '`remove_channel`\nRemoves all channel specific links.\n\n' +
+              '`remove_guild`\nRemoves all guild specific links.\n\n' +
               '`filter_irc <name>`\nFilters messages of an IRC user. Re-entering the name removes the filter.\n\n' +
               '`filter_discord <id>`\nFilters messages of a Discord user. Re-entering the id removes the filter.\n\n' +
               '`reconnect`\nReconnects Discord and IRC.\n\n' +

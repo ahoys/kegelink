@@ -5,10 +5,11 @@
   "license": "MIT",
   "scripts": {
     "build": "yarn lint && tsc && cp package.json build/package.json && cp package-lock.json build/package-lock.json && cp .env build/.env",
-    "start": "tsc && cp dev.env build/.env && node build/kegelink",
+    "start": "tsc && cp .dev.env build/.env && node build/kegelink",
     "lint": "./node_modules/.bin/eslint . --ext .ts"
   },
   "dependencies": {
+    "@types/nedb": "^1.8.11",
     "@types/node": "^14.14.14",
     "@types/ws": "^7.4.0",
     "@typescript-eslint/eslint-plugin": "^4.11.1",
@@ -20,6 +21,7 @@
     "eslint-plugin-prettier": "^3.3.0",
     "irc-upd": "^0.11.0",
     "logscribe": "^2.0.2",
+    "nedb": "^1.8.0",
     "prettier": "^2.2.1",
     "ts-loader": "^8.0.12",
     "typescript": "^4.1.3"
