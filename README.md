@@ -2,7 +2,7 @@
 ### A Discord to IRC communication link.
 # <a href='https://github.com/ahoys/kegelink'><img src='assets/kegelink.png?raw=true' height='192' alt='Kegelink' /></a>
 
-**Version 2 now released!**
+**This version is still work in progress!**
 
 Ketsune "Gerald" Link, alias Kegelink, is a bot that's sole purpose was to connect my IRC-pal, Kegetys, to Discord. Now I've rewritten it in TypeScript for everyone's enjoyment.
 
