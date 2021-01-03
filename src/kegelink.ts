@@ -87,12 +87,12 @@ const logInIRC = () => {
     ircClient.removeAllListeners('message');
     ircClient.removeAllListeners('error');
     p('Connecting to IRC...');
-    // ircClient.connect(null, () => {
-    //   // Event: Registered.
-    //   p('Successfully connected to IRC!');
-    //   ircClient?.addListener('message', onIRCMessage);
-    //   ircClient?.addListener('error', onIRCError);
-    // });
+    ircClient.connect(null, () => {
+      // Event: Registered.
+      p('Successfully connected to IRC!');
+      ircClient?.addListener('message', onIRCMessage);
+      ircClient?.addListener('error', onIRCError);
+    });
   } catch (err) {
     lp(err);
   }
