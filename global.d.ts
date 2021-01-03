@@ -7,6 +7,8 @@ interface IIRCOptions {
   autoConnect: boolean;
   autoRejoin: boolean;
   autoRenick: boolean;
+  secure: boolean;
+  selfSigned: boolean;
   encoding: string;
   retryDelay: number;
   floodProtection: boolean;

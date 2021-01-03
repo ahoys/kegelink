@@ -79,6 +79,8 @@ const logInIRC = () => {
       autoConnect: false,
       autoRejoin: true,
       autoRenick: true,
+      secure: true,
+      selfSigned: true,
       encoding: envs.IRC_ENCODING,
       retryDelay: Number(envs.IRC_RETRY_DELAY) ?? 10240,
       floodProtection: true,
