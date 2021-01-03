@@ -45,41 +45,32 @@ p(envs);
 const filtersDb = getDataStore('filters.nedb');
 const linksDb = getDataStore('links.nedb');
 const discordClient = new DiscordJs.Client();
-const links: { [key: string]: string } = {};
-let filtered: string[] = [];
+const links: TLinks = {};
+let filters: TFilters = [];
 let ircClient: undefined | Client;
 
 // Load links from the database.
 if (linksDb) {
-  linksDb.find(
-    {},
-    (
-      err: Error,
-      docs: Array<{ _id: string; discordChannel: string; ircChannel: string }>
-    ) => {
-      if (err) {
-        lp(err);
-      } else if (docs) {
-        docs.forEach((link) => {
-          links[link.discordChannel] = link.ircChannel;
-        });
-      }
+  linksDb.find({}, (err: Error, docs: TLinksDocs) => {
+    if (err) {
+      lp(err);
+    } else if (docs) {
+      docs.forEach((link) => {
+        links[link.discordChannel] = link.ircChannel;
+      });
     }
-  );
+  });
 }
 
 // Load user filters from the database.
 if (filtersDb) {
-  filtersDb.find(
-    {},
-    (err: Error, docs: Array<{ _id: string; userId: string }>) => {
-      if (err) {
-        lp(err);
-      } else if (docs) {
-        filtered = docs.map((d) => d.userId);
-      }
+  filtersDb.find({}, (err: Error, docs: TFiltersDocs) => {
+    if (err) {
+      lp(err);
+    } else if (docs) {
+      filters = docs.map((d) => d.userId);
     }
-  );
+  });
 }
 
 // --- IRC ---
@@ -200,13 +191,13 @@ discordClient.on('message', (Message) => {
         const cmdIndex = Message?.guild ? 1 : 0;
         const cmd = Message.content?.split(' ')[cmdIndex];
         if (cmd === 'status' && !onGuild) {
-          cmdStatus(Message, linksDb, filtersDb);
+          cmdStatus(Message, links, filters);
         } else if (cmd === 'connect' && onGuild) {
           cmdConnect(Message, linksDb);
         } else if (cmd === 'disconnect' && onGuild) {
           cmdDisconnect(Message, linksDb);
         } else if (cmd === 'filter' && !onGuild) {
-          cmdFilter(Message, filtersDb, filtered);
+          cmdFilter(Message, filtersDb, filters);
         } else if (cmd === 'reset' && !onGuild) {
           cmdReset(Message, linksDb, filtersDb);
         } else if (cmd === 'exit' && !onGuild) {
@@ -225,7 +216,7 @@ discordClient.on('message', (Message) => {
       } else if (Message && onGuild && linksDb && filtersDb) {
         // This message may require re-sending to IRC.
         const authorId = Message.author?.id;
-        if (!filtered.includes(authorId)) {
+        if (!filters.includes(authorId)) {
           p('Allowed');
         }
       }

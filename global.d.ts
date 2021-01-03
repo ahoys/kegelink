@@ -29,3 +29,18 @@ declare module 'irc-upd' {
     public disconnect: (callback: TCallback) => void;
   }
 }
+
+declare type TLinksDocs = Array<{
+  _id: string;
+  discordChannel: string;
+  ircChannel: string;
+}>;
+
+declare type TFiltersDocs = Array<{
+  _id: string;
+  userId: string;
+}>;
+
+declare type TFilters = string[];
+
+declare type TLinks = { [key: string]: string };
