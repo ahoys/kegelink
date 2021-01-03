@@ -14,7 +14,7 @@ export const cmdStatus = (
       message.channel.send('No links or filters set.').catch((err) => lp(err));
     } else {
       let str = '```';
-      if (linksLen > 0) {
+      if (linksLen) {
         str += '\nLinks:\n';
         Object.keys(links).forEach((link, i) => {
           const ircChannel = links[link];
@@ -27,7 +27,7 @@ export const cmdStatus = (
       if (linksLen && filtersLen) {
         str += '\n';
       }
-      if (filtersLen > 0) {
+      if (filtersLen) {
         str += '\nFilters:\n';
         filters.forEach((filter, i) => {
           str += i === filtersLen - 1 ? `${filter}.` : `${filter}, `;
