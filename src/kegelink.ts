@@ -45,6 +45,8 @@ p(envs);
 const filtersDb = getDataStore('filters.nedb');
 const linksDb = getDataStore('links.nedb');
 const discordClient = new DiscordJs.Client();
+const filtered: string[] = [];
+const links: { [key: string]: string } = {};
 let ircClient: undefined | Client;
 
 // --- IRC ---
@@ -153,6 +155,7 @@ discordClient.on('message', (Message) => {
       // Is this a message to be sent or a command to be
       // executed?
       if (
+        Message &&
         (Message.mentions?.has(botId) || !onGuild) &&
         authorId === envs.OWNER_ID &&
         discordClient &&
@@ -170,7 +173,7 @@ discordClient.on('message', (Message) => {
         } else if (cmd === 'disconnect' && onGuild) {
           cmdDisconnect(Message, linksDb);
         } else if (cmd === 'filter' && !onGuild) {
-          cmdFilter(Message, filtersDb);
+          cmdFilter(Message, filtersDb, filtered);
         } else if (cmd === 'reset' && !onGuild) {
           cmdReset(Message, linksDb, filtersDb);
         } else if (cmd === 'exit' && !onGuild) {
@@ -186,9 +189,12 @@ discordClient.on('message', (Message) => {
               'cmd: `exit`\nin: `direct message`\nGracefully terminates the bot.'
           );
         }
-      } else if (onGuild && linksDb && filtersDb) {
+      } else if (Message && onGuild && linksDb && filtersDb) {
         // This message may require re-sending to IRC.
-        p('A message that should be read.');
+        const authorId = Message.author?.id;
+        if (!filtered.includes(authorId)) {
+          p('Allowed');
+        }
       }
     }
   } catch (err) {
