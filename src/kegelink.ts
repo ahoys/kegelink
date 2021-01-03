@@ -45,9 +45,42 @@ p(envs);
 const filtersDb = getDataStore('filters.nedb');
 const linksDb = getDataStore('links.nedb');
 const discordClient = new DiscordJs.Client();
-const filtered: string[] = [];
 const links: { [key: string]: string } = {};
+let filtered: string[] = [];
 let ircClient: undefined | Client;
+
+// Load links from the database.
+if (linksDb) {
+  linksDb.find(
+    {},
+    (
+      err: Error,
+      docs: Array<{ _id: string; discordChannel: string; ircChannel: string }>
+    ) => {
+      if (err) {
+        lp(err);
+      } else if (docs) {
+        docs.forEach((link) => {
+          links[link.discordChannel] = link.ircChannel;
+        });
+      }
+    }
+  );
+}
+
+// Load user filters from the database.
+if (filtersDb) {
+  filtersDb.find(
+    {},
+    (err: Error, docs: Array<{ _id: string; userId: string }>) => {
+      if (err) {
+        lp(err);
+      } else if (docs) {
+        filtered = docs.map((d) => d.userId);
+      }
+    }
+  );
+}
 
 // --- IRC ---
 const onIRCMessage = (nick: string, to: string, text: string) => {
