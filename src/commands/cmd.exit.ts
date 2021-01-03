@@ -1,7 +1,12 @@
-import { Client, Message } from 'discord.js';
+import { Message, Client } from 'discord.js';
 import { p, lp } from 'logscribe';
+import { Client as IRCClient } from 'irc-upd';
 
-export const cmdExit = (message: Message, discordClient: Client): void => {
+export const cmdExit = (
+  message: Message,
+  discordClient: Client,
+  ircClient: IRCClient
+): void => {
   try {
     p('Executing exit...');
     message.channel

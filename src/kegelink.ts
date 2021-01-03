@@ -2,14 +2,14 @@ import DiscordJs from 'discord.js';
 import { Client } from 'irc-upd';
 import { config } from 'dotenv';
 import { p, lp } from 'logscribe';
+import { getDataStore } from './db';
 import { cmdConnect } from './commands/cmd.connect';
 import { cmdExit } from './commands/cmd.exit';
 import { cmdFilter } from './commands/cmd.filter';
 import { cmdReconnect } from './commands/cmd.reconnect';
-import { cmdRemoveChannel } from './commands/cmd.removeChannel';
-import { cmdRemoveGuild } from './commands/cmd.removeGuild';
+import { cmdReset } from './commands/cmd.reset';
+import { cmdDisconnect } from './commands/cmd.disconnect';
 import { cmdStatus } from './commands/cmd.status';
-import { getDataStore } from './db';
 
 config({ path: __dirname + '/.env' });
 
@@ -43,10 +43,8 @@ mandatoryEnvs.forEach((mEnv) => {
 p(envs);
 
 // Let's go and initialize a new Discord client.
-const filtersIrcDb = getDataStore('filters-irc.nedb');
-const filtersDiscordDb = getDataStore('filters-discord.nedb');
-const guildsDb = getDataStore('guilds.nedb');
-const channelsDb = getDataStore('channels.nedb');
+const filtersDb = getDataStore('filters.nedb');
+const linksDb = getDataStore('links.nedb');
 const discordClient = new DiscordJs.Client();
 let ircClient: undefined | Client;
 
@@ -149,40 +147,44 @@ discordClient.on('message', (Message) => {
       // executed?
       if (
         (Message.mentions?.has(botId) || !onGuild) &&
-        authorId === envs.OWNER_ID
+        authorId === envs.OWNER_ID &&
+        discordClient &&
+        ircClient &&
+        linksDb &&
+        filtersDb
       ) {
+        // This is an owner given command.
         const cmdIndex = Message?.guild ? 1 : 0;
         const cmd = Message.content?.split(' ')[cmdIndex];
-        if (cmd === 'connect' && onGuild) {
-          cmdConnect(Message);
-        } else if (cmd === 'status' && onGuild) {
-          cmdStatus(Message);
-        } else if (cmd === 'remove_channel' && onGuild) {
-          cmdRemoveChannel(Message);
-        } else if (cmd === 'remove_guild' && onGuild) {
-          cmdRemoveGuild(Message);
-        } else if (cmd === 'filter_irc' && filtersIrcDb) {
-          cmdFilter(Message, filtersIrcDb);
-        } else if (cmd === 'filter_discord' && filtersDiscordDb) {
-          cmdFilter(Message, filtersDiscordDb);
-        } else if (cmd === 'reconnect') {
-          cmdReconnect(Message);
-        } else if (cmd === 'exit') {
-          cmdExit(Message, discordClient);
+        if (cmd === 'status' && !onGuild) {
+          cmdStatus(Message, linksDb, filtersDb);
+        } else if (cmd === 'connect' && onGuild) {
+          cmdConnect(Message, linksDb);
+        } else if (cmd === 'disconnect' && onGuild) {
+          cmdDisconnect(Message, linksDb);
+        } else if (cmd === 'reconnect' && !onGuild) {
+          cmdReconnect(Message, discordClient, ircClient);
+        } else if (cmd === 'filter' && !onGuild) {
+          cmdFilter(Message, filtersDb);
+        } else if (cmd === 'reset' && !onGuild) {
+          cmdReset(Message, linksDb, filtersDb);
+        } else if (cmd === 'exit' && !onGuild) {
+          cmdExit(Message, discordClient, ircClient);
         } else {
-          p('Invalid command given.');
           Message.channel.send(
             'Supported commands are:\n\n' +
-              '`connect <#irc-channel> <optional password>`\nEstablishes a new link. All messages sent to this channel will be sent to IRC and vice versa. You can change the password by re-entering the channel with the new password.\n\n' +
-              '`status`\nDisplays all active links and filters of the guild.\n\n' +
-              '`remove_channel`\nRemoves all channel specific links.\n\n' +
-              '`remove_guild`\nRemoves all guild specific links.\n\n' +
-              '`filter_irc <name>`\nFilters messages of an IRC user. Re-entering the name removes the filter.\n\n' +
-              '`filter_discord <id>`\nFilters messages of a Discord user. Re-entering the id removes the filter.\n\n' +
-              '`reconnect`\nReconnects Discord and IRC.\n\n' +
-              '`exit`\nTerminates the bot.'
+              'cmd: `status`\nin: `direct message`\nDisplays all active links and filters.\n\n' +
+              'cmd: `@bot connect <#irc-channel> <optional password>`\nin: `channel`\nEstablishes a new link. All messages sent to this channel will be sent to IRC and vice versa. You can change the password by re-entering the channel with the new password.\n\n' +
+              'cmd: `@bot disconnect`\nin: `channel`\nRemoves all linkings specific to the Discord-channel.\n\n' +
+              'cmd: `reconnect`\nin: `direct message`\nReconnects Discord and IRC.\n\n' +
+              'cmd: `filter <discord id or irc nickname>`\nin: `direct message`\nMessages by this user are ignored. Discord id or IRC nickname. Re-entering the user will remove the filter.\n\n' +
+              'cmd: `reset`\nin: `direct message`\nClears all data. All links and filters will be lost.\n\n' +
+              'cmd: `exit`\nin: `direct message`\nTerminates the bot.'
           );
         }
+      } else if (onGuild && linksDb && filtersDb) {
+        // This message may require re-sending to IRC.
+        p('A message that should be read.');
       }
     }
   } catch (err) {
