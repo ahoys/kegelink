@@ -4,8 +4,7 @@ import { config } from 'dotenv';
 import { p, lp } from 'logscribe';
 import { cmdConnect } from './commands/cmd.connect';
 import { cmdExit } from './commands/cmd.exit';
-import { cmdFilterDiscord } from './commands/cmd.filterDiscord';
-import { cmdFilterIrc } from './commands/cmd.filterIrc';
+import { cmdFilter } from './commands/cmd.filter';
 import { cmdReconnect } from './commands/cmd.reconnect';
 import { cmdRemoveChannel } from './commands/cmd.removeChannel';
 import { cmdRemoveGuild } from './commands/cmd.removeGuild';
@@ -88,12 +87,12 @@ const logInIRC = () => {
     ircClient.removeAllListeners('message');
     ircClient.removeAllListeners('error');
     p('Connecting to IRC...');
-    ircClient.connect(null, () => {
-      // Event: Registered.
-      p('Successfully connected to IRC!');
-      ircClient?.addListener('message', onIRCMessage);
-      ircClient?.addListener('error', onIRCError);
-    });
+    // ircClient.connect(null, () => {
+    //   // Event: Registered.
+    //   p('Successfully connected to IRC!');
+    //   ircClient?.addListener('message', onIRCMessage);
+    //   ircClient?.addListener('error', onIRCError);
+    // });
   } catch (err) {
     lp(err);
   }
@@ -142,23 +141,28 @@ discordClient.on('message', (Message) => {
     // Don't repeat your own messages!
     const authorId = Message?.author?.id;
     const botId = discordClient?.user?.id;
+    const onGuild = !!Message?.guild;
     if (Message && authorId && botId && authorId !== botId) {
       // Is this a message to be sent or a command to be
       // executed?
-      if (Message.mentions?.has(botId) && authorId === envs.OWNER_ID) {
-        const cmd = Message.content?.split(' ')[1];
-        if (cmd === 'connect') {
+      if (
+        (Message.mentions?.has(botId) || !onGuild) &&
+        authorId === envs.OWNER_ID
+      ) {
+        const cmdIndex = Message?.guild ? 1 : 0;
+        const cmd = Message.content?.split(' ')[cmdIndex];
+        if (cmd === 'connect' && onGuild) {
           cmdConnect(Message);
-        } else if (cmd === 'status') {
+        } else if (cmd === 'status' && onGuild) {
           cmdStatus(Message);
-        } else if (cmd === 'remove_channel') {
+        } else if (cmd === 'remove_channel' && onGuild) {
           cmdRemoveChannel(Message);
-        } else if (cmd === 'remove_guild') {
+        } else if (cmd === 'remove_guild' && onGuild) {
           cmdRemoveGuild(Message);
-        } else if (cmd === 'filter_irc') {
-          cmdFilterIrc(Message);
-        } else if (cmd === 'filter_discord') {
-          cmdFilterDiscord(Message);
+        } else if (cmd === 'filter_irc' && filtersIrcDb) {
+          cmdFilter(Message, filtersIrcDb);
+        } else if (cmd === 'filter_discord' && filtersDiscordDb) {
+          cmdFilter(Message, filtersDiscordDb);
         } else if (cmd === 'reconnect') {
           cmdReconnect(Message);
         } else if (cmd === 'exit') {
