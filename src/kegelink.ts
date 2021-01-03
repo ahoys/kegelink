@@ -6,7 +6,6 @@ import { getDataStore } from './db';
 import { cmdConnect } from './commands/cmd.connect';
 import { cmdExit } from './commands/cmd.exit';
 import { cmdFilter } from './commands/cmd.filter';
-import { cmdReconnect } from './commands/cmd.reconnect';
 import { cmdReset } from './commands/cmd.reset';
 import { cmdDisconnect } from './commands/cmd.disconnect';
 import { cmdStatus } from './commands/cmd.status';
@@ -51,7 +50,7 @@ let ircClient: undefined | Client;
 // --- IRC ---
 const onIRCMessage = (nick: string, to: string, text: string) => {
   try {
-    p('New IRC message:', nick, to);
+    p('New IRC message:', nick, to, text);
   } catch (err) {
     lp(err);
   }
@@ -170,8 +169,6 @@ discordClient.on('message', (Message) => {
           cmdConnect(Message, linksDb);
         } else if (cmd === 'disconnect' && onGuild) {
           cmdDisconnect(Message, linksDb);
-        } else if (cmd === 'reconnect' && !onGuild) {
-          cmdReconnect(Message, discordClient, ircClient);
         } else if (cmd === 'filter' && !onGuild) {
           cmdFilter(Message, filtersDb);
         } else if (cmd === 'reset' && !onGuild) {
@@ -184,7 +181,6 @@ discordClient.on('message', (Message) => {
               'cmd: `status`\nin: `direct message`\nDisplays all active links and filters.\n\n' +
               'cmd: `@bot connect <#irc-channel> <optional password>`\nin: `channel`\nEstablishes a new link. All messages sent to this channel will be sent to IRC and vice versa. You can change the password by re-entering the channel with the new password.\n\n' +
               'cmd: `@bot disconnect`\nin: `channel`\nRemoves all linkings specific to the Discord-channel.\n\n' +
-              'cmd: `reconnect`\nin: `direct message`\nReconnects Discord and IRC.\n\n' +
               'cmd: `filter <discord id or irc nickname>`\nin: `direct message`\nMessages by this user are ignored. Discord id or IRC nickname. Re-entering the user will remove the filter.\n\n' +
               'cmd: `reset`\nin: `direct message`\nClears all data. All links and filters will be lost.\n\n' +
               'cmd: `exit`\nin: `direct message`\nGracefully terminates the bot.'
