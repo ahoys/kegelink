@@ -133,6 +133,14 @@ discordClient.on('ready', () => {
 });
 
 /**
+ * When Discord disconnects.
+ * Note that this is not deliberate.
+ */
+discordClient.on('disconnect', () => {
+  p('Discord disconnected.');
+});
+
+/**
  * A new message read.
  * Messages are used to control the bot.
  */
@@ -179,7 +187,7 @@ discordClient.on('message', (Message) => {
               'cmd: `reconnect`\nin: `direct message`\nReconnects Discord and IRC.\n\n' +
               'cmd: `filter <discord id or irc nickname>`\nin: `direct message`\nMessages by this user are ignored. Discord id or IRC nickname. Re-entering the user will remove the filter.\n\n' +
               'cmd: `reset`\nin: `direct message`\nClears all data. All links and filters will be lost.\n\n' +
-              'cmd: `exit`\nin: `direct message`\nTerminates the bot.'
+              'cmd: `exit`\nin: `direct message`\nGracefully terminates the bot.'
           );
         }
       } else if (onGuild && linksDb && filtersDb) {

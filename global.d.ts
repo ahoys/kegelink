@@ -15,6 +15,8 @@ interface IIRCOptions {
   floodProtectionDelay: number;
 }
 
+type TCallback = () => void;
+
 declare module 'irc-upd' {
   export class Client {
     constructor(server: string, nick: string, options: IIRCOptions);
@@ -23,9 +25,7 @@ declare module 'irc-upd' {
       listener: (...args: string[]) => void
     ) => void;
     public removeAllListeners: (event: string) => void;
-    public connect: (
-      retryCount: number | null,
-      onRegistered: () => void
-    ) => void;
+    public connect: (retryCount: number | null, callback: TCallback) => void;
+    public disconnect: (callback: TCallback) => void;
   }
 }
