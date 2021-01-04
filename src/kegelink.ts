@@ -195,7 +195,7 @@ discordClient.on('message', (Message) => {
         } else if (cmd === 'connect' && onGuild) {
           cmdConnect(Message, linksDb, links);
         } else if (cmd === 'disconnect' && onGuild) {
-          cmdDisconnect(Message, linksDb);
+          cmdDisconnect(Message, linksDb, links);
         } else if (cmd === 'filter' && !onGuild) {
           cmdFilter(Message, filtersDb, filters);
         } else if (cmd === 'reset' && !onGuild) {
