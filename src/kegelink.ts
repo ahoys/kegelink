@@ -193,7 +193,7 @@ discordClient.on('message', (Message) => {
         if (cmd === 'status' && !onGuild) {
           cmdStatus(Message, links, filters);
         } else if (cmd === 'connect' && onGuild) {
-          cmdConnect(Message, linksDb);
+          cmdConnect(Message, linksDb, links);
         } else if (cmd === 'disconnect' && onGuild) {
           cmdDisconnect(Message, linksDb);
         } else if (cmd === 'filter' && !onGuild) {
