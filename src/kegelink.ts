@@ -6,7 +6,6 @@ import { getDataStore } from './db';
 import { cmdConnect } from './commands/cmd.connect';
 import { cmdExit } from './commands/cmd.exit';
 import { cmdFilter } from './commands/cmd.filter';
-import { cmdReset } from './commands/cmd.reset';
 import { cmdDisconnect } from './commands/cmd.disconnect';
 import { cmdStatus } from './commands/cmd.status';
 
@@ -198,8 +197,6 @@ discordClient.on('message', (Message) => {
           cmdDisconnect(Message, linksDb, links);
         } else if (cmd === 'filter' && !onGuild) {
           cmdFilter(Message, filtersDb, filters);
-        } else if (cmd === 'reset' && !onGuild) {
-          cmdReset(Message, linksDb, filtersDb);
         } else if (cmd === 'exit' && !onGuild) {
           cmdExit(Message, discordClient, ircClient);
         } else {
@@ -209,7 +206,6 @@ discordClient.on('message', (Message) => {
               'cmd: `@bot connect <#irc-channel> <optional password>`\nin: `channel`\nEstablishes a new link. All messages sent to this channel will be sent to IRC and vice versa. You can change the password by re-entering the channel with the new password.\n\n' +
               'cmd: `@bot disconnect`\nin: `channel`\nRemoves all linkings specific to the Discord-channel.\n\n' +
               'cmd: `filter <discord id or irc nickname>`\nin: `direct message`\nMessages by this user are ignored. Discord id or IRC nickname. Re-entering the user will remove the filter.\n\n' +
-              'cmd: `reset`\nin: `direct message`\nClears all data. All links and filters will be lost.\n\n' +
               'cmd: `exit`\nin: `direct message`\nGracefully terminates the bot.'
           );
         }
