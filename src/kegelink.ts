@@ -180,6 +180,7 @@ discordClient.on('message', (Message) => {
       if (
         Message &&
         (Message.mentions?.has(botId) || !onGuild) &&
+        !Message.mentions?.everyone &&
         authorId === envs.OWNER_ID &&
         discordClient &&
         ircClient &&
