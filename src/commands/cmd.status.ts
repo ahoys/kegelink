@@ -21,7 +21,7 @@ export const cmdStatus = (
         filtersDb.find({}, (err: Error, filters: TFiltersDocs) => {
           if (err) {
             lp(err);
-          } else {
+          } else if (links.length || filters.length) {
             let str = '```';
             if (links.length) {
               str += '\nLinks:\n';
@@ -40,11 +40,15 @@ export const cmdStatus = (
               Object.values(filters).forEach((value, i) => {
                 str +=
                   i === filters.length - 1
-                    ? `${value.userId}.`
+                    ? `${value.userId}`
                     : `${value.userId}, `;
               });
             }
             message.channel.send(str + '```').catch((err) => lp(err));
+          } else {
+            message.channel
+              .send('No connections or filters set.')
+              .catch((err) => lp(err));
           }
         });
       }

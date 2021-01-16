@@ -10,6 +10,7 @@ interface IIRCOptions {
   secure: boolean;
   selfSigned: boolean;
   encoding: string;
+  retryCount: number | null;
   retryDelay: number;
   floodProtection: boolean;
   floodProtectionDelay: number;
