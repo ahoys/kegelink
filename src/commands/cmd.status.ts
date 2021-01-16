@@ -1,40 +1,54 @@
 import { Message } from 'discord.js';
 import { p, lp } from 'logscribe';
 
+/**
+ * Displays the current status of the bot.
+ * @param message Discord.js Message object.
+ * @param linksDb Links Nedb-database.
+ * @param filtersDb Filters Nedb-database.
+ */
 export const cmdStatus = (
   message: Message,
-  links: TLinks,
-  filters: TFilters
+  linksDb: Nedb,
+  filtersDb: Nedb
 ): void => {
   try {
     p('Executing cmdStatus...');
-    const linksLen = Object.keys(links).length;
-    const filtersLen = filters.length;
-    if (linksLen + filtersLen === 0) {
-      message.channel.send('No links or filters set.').catch((err) => lp(err));
-    } else {
-      let str = '```';
-      if (linksLen) {
-        str += '\nLinks:\n';
-        Object.keys(links).forEach((link, i) => {
-          const ircChannel = links[link];
-          str +=
-            i === 0
-              ? `${link} <-> ${ircChannel}`
-              : `\n${link} <-> ${ircChannel}`;
+    linksDb.find({}, (err: Error, links: TLinksDocs) => {
+      if (err) {
+        lp(err);
+      } else {
+        filtersDb.find({}, (err: Error, filters: TFiltersDocs) => {
+          if (err) {
+            lp(err);
+          } else {
+            let str = '```';
+            if (links.length) {
+              str += '\nLinks:\n';
+              Object.values(links).forEach((value, i) => {
+                str +=
+                  i === 0
+                    ? `${value.discordChannel} <-> ${value.ircChannel}`
+                    : `\n${value.discordChannel} <-> ${value.ircChannel}`;
+              });
+            }
+            if (links.length && filters.length) {
+              str += '\n';
+            }
+            if (filters.length) {
+              str += '\nFilters:\n';
+              Object.values(filters).forEach((value, i) => {
+                str +=
+                  i === filters.length - 1
+                    ? `${value.userId}.`
+                    : `${value.userId}, `;
+              });
+            }
+            message.channel.send(str + '```').catch((err) => lp(err));
+          }
         });
       }
-      if (linksLen && filtersLen) {
-        str += '\n';
-      }
-      if (filtersLen) {
-        str += '\nFilters:\n';
-        filters.forEach((filter, i) => {
-          str += i === filtersLen - 1 ? `${filter}.` : `${filter}, `;
-        });
-      }
-      message.channel.send(str + '```').catch((err) => lp(err));
-    }
+    });
   } catch (err) {
     lp(err);
   }

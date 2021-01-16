@@ -22,25 +22,33 @@ declare module 'irc-upd' {
     constructor(server: string, nick: string, options: IIRCOptions);
     public addListener: (
       event: 'message' | 'error',
-      listener: (...args: string[]) => void
+      listener: (...args: any) => void
     ) => void;
     public removeAllListeners: (event: string) => void;
     public connect: (retryCount: number | null, callback: TCallback) => void;
     public disconnect: (callback: TCallback) => void;
+    public say: (target: string, message: string) => void;
+    public join: (channelList: string, callback?: TCallback) => void;
+    public part: (
+      channelList: string,
+      message?: string,
+      callback?: TCallback
+    ) => void;
   }
 }
 
-declare type TLinksDocs = Array<{
+declare type TLinksDoc = {
   _id: string;
   discordChannel: string;
   ircChannel: string;
-}>;
+  ircChannelPw: string | undefined;
+};
 
-declare type TFiltersDocs = Array<{
+declare type TLinksDocs = Array<TLinksDoc>;
+
+declare type TFiltersDoc = {
   _id: string;
   userId: string;
-}>;
+};
 
-declare type TFilters = string[];
-
-declare type TLinks = { [key: string]: string };
+declare type TFiltersDocs = Array<TFiltersDoc>;
