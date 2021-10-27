@@ -290,14 +290,6 @@ discordClient.on('message', (Message) => {
                     // Send to IRC.
                     if (content.trim().length) {
                       ircClient?.say(doc.ircChannel, `${authorTag}${content}`);
-                      if (
-                        Message.mentions?.has(botId) &&
-                        !Message.mentions?.everyone
-                      ) {
-                        Message.reply(
-                          "mentioning me is unnecessary. It won't highlight IRC-users."
-                        ).catch((err) => lp(err));
-                      }
                     }
                     // Send attachments to IRC.
                     Message.attachments.array().forEach((attachment) => {
