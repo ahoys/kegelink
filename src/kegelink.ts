@@ -1,7 +1,7 @@
 import DiscordJs from 'discord.js';
 import { Client } from 'irc-upd';
 import { config } from 'dotenv';
-import { p, lp } from 'logscribe';
+import { p } from 'logscribe';
 import { getDataStore } from './db';
 import { cmdConnect } from './commands/cmd.connect';
 import { cmdExit } from './commands/cmd.exit';
@@ -69,13 +69,13 @@ const onIRCMessage = (nick: string, to: string, text: string) => {
         { userId: nick.toLowerCase() },
         (err: Error | null, doc: TFiltersDoc) => {
           if (err) {
-            lp(err);
+            p(err);
           } else if (!doc) {
             linksDb.findOne(
               { ircChannel: to },
               (err: Error | null, doc: TLinksDoc) => {
                 if (err) {
-                  lp(err);
+                  p(err);
                 } else if (doc) {
                   const channel: any = discordClient.channels.cache.get(
                     doc.discordChannel
@@ -91,7 +91,7 @@ const onIRCMessage = (nick: string, to: string, text: string) => {
       );
     }
   } catch (err) {
-    lp(err);
+    p(err);
   }
 };
 
@@ -100,7 +100,7 @@ const onIRCMessage = (nick: string, to: string, text: string) => {
  */
 const onIRCError = (errorMessage: { [key: string]: string }) => {
   try {
-    lp('IRC related error: ', JSON.stringify(errorMessage));
+    p('IRC related error: ', JSON.stringify(errorMessage));
     if (
       discordClient &&
       typeof errorMessage === 'object' &&
@@ -114,12 +114,12 @@ const onIRCError = (errorMessage: { [key: string]: string }) => {
         if (channel && channel.type === 'text' && channel.send) {
           channel
             .send('Invalid IRC-channel key given (or missing).')
-            .catch((err: Error) => lp(err));
+            .catch((err: Error) => p(err));
         }
       }
     }
   } catch (err) {
-    lp(err);
+    p(err);
   }
 };
 
@@ -157,7 +157,7 @@ const logInIRC = () => {
       // Join to requested IRC-channels.
       linksDb?.find({}, (err: Error, docs: TLinksDocs) => {
         if (err) {
-          lp(err);
+          p(err);
         } else if (docs) {
           const channels = Object.values(docs).map((d) =>
             d.ircChannelPw ? `${d.ircChannel} ${d.ircChannelPw}` : d.ircChannel
@@ -169,7 +169,7 @@ const logInIRC = () => {
       });
     });
   } catch (err) {
-    lp(err);
+    p(err);
   }
 };
 
@@ -263,7 +263,7 @@ discordClient.on('message', (Message) => {
                 'cmd: `filter <discord id or irc nickname>`\nin: `direct message`\nMessages by this user are ignored. Discord id or IRC nickname. Re-entering the user will remove the filter.\n\n' +
                 'cmd: `exit`\nin: `direct message`\nGracefully terminates the bot.'
             )
-            .catch((err) => lp(err));
+            .catch((err) => p(err));
         }
       } else if (Message && onGuild && linksDb && filtersDb) {
         // A new message read in Discord. Pass it to IRC.
@@ -272,13 +272,13 @@ discordClient.on('message', (Message) => {
           { userId: Message.author?.id },
           (err: Error | null, doc: TFiltersDoc) => {
             if (err) {
-              lp(err);
+              p(err);
             } else if (!doc) {
               linksDb.findOne(
                 { discordChannel: Message.channel.id },
                 (err: Error | null, doc: TLinksDoc) => {
                   if (err) {
-                    lp(err);
+                    p(err);
                   } else if (
                     doc &&
                     typeof doc.ircChannel === 'string' &&
@@ -309,7 +309,7 @@ discordClient.on('message', (Message) => {
       }
     }
   } catch (err) {
-    lp(err);
+    p(err);
   }
 });
 
@@ -321,7 +321,7 @@ discordClient.on('error', () => {
   try {
     login();
   } catch (err) {
-    lp(err);
+    p(err);
   }
 });
 
