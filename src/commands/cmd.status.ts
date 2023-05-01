@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { p, lp } from 'logscribe';
+import { p } from 'logscribe';
 
 /**
  * Displays the current status of the bot.
@@ -16,11 +16,11 @@ export const cmdStatus = (
     p('Executing cmdStatus...');
     linksDb.find({}, (err: Error, links: TLinksDocs) => {
       if (err) {
-        lp(err);
+        p(err);
       } else {
         filtersDb.find({}, (err: Error, filters: TFiltersDocs) => {
           if (err) {
-            lp(err);
+            p(err);
           } else if (links.length || filters.length) {
             let str = '```';
             if (links.length) {
@@ -44,16 +44,16 @@ export const cmdStatus = (
                     : `${value.userId}, `;
               });
             }
-            message.channel.send(str + '```').catch((err) => lp(err));
+            message.channel.send(str + '```').catch((err) => p(err));
           } else {
             message.channel
               .send('No connections or filters set.')
-              .catch((err) => lp(err));
+              .catch((err) => p(err));
           }
         });
       }
     });
   } catch (err) {
-    lp(err);
+    p(err);
   }
 };

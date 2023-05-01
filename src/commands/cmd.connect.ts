@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { p, lp } from 'logscribe';
+import { p } from 'logscribe';
 import { Client as IRCClient } from 'irc-upd';
 
 /**
@@ -33,7 +33,7 @@ export const cmdConnect = (
       // 2) We update an existing link.
       linksDb.findOne({ discordChannel: message.channel.id }, (err, doc) => {
         if (err) {
-          lp(err);
+          p(err);
         } else if (doc) {
           // The link exists, so we are updating.
           linksDb.update(
@@ -48,7 +48,7 @@ export const cmdConnect = (
             {},
             (err, num) => {
               if (err) {
-                lp(err);
+                p(err);
               } else if (num) {
                 p(`Updating ${message.channel.id} link to ${ircChannel}.`);
                 if (doc.ircChannel !== ircChannel) {
@@ -62,11 +62,11 @@ export const cmdConnect = (
                 }
                 message.channel
                   .send('An existing link updated.')
-                  .catch((err) => lp(err));
+                  .catch((err) => p(err));
               } else {
                 message.channel
                   .send('Failed to update. Unable to access the database.')
-                  .catch((err) => lp(err));
+                  .catch((err) => p(err));
               }
             }
           );
@@ -80,17 +80,17 @@ export const cmdConnect = (
             },
             (err, doc) => {
               if (err) {
-                lp(err);
+                p(err);
               } else if (doc) {
                 p(`Added a new link ${message.channel.id} <-> ${ircChannel}.`);
                 ircClient.join(ircChannelWithPw);
                 message.channel
                   .send('Added a new link.')
-                  .catch((err) => lp(err));
+                  .catch((err) => p(err));
               } else {
                 message.channel
                   .send('Failed to add. Unable to access the database.')
-                  .catch((err) => lp(err));
+                  .catch((err) => p(err));
               }
             }
           );
@@ -98,6 +98,6 @@ export const cmdConnect = (
       });
     }
   } catch (err) {
-    lp(err);
+    p(err);
   }
 };

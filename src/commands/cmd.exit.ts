@@ -1,5 +1,5 @@
 import { Message, Client } from 'discord.js';
-import { p, lp } from 'logscribe';
+import { p } from 'logscribe';
 import { Client as IRCClient } from 'irc-upd';
 
 let running = false;
@@ -14,11 +14,11 @@ const disconnectDiscord = (message: Message, discordClient: Client): void => {
         process.exit(0);
       })
       .catch((err) => {
-        lp(err);
+        p(err);
         running = false;
       });
   } catch (err) {
-    lp(err);
+    p(err);
   }
 };
 
@@ -48,13 +48,13 @@ export const cmdExit = (
           });
         })
         .catch((err) => {
-          lp(err);
+          p(err);
         });
     } else {
       p('Command cmdExit is already running.');
     }
   } catch (err) {
-    lp(err);
+    p(err);
     running = false;
   }
 };

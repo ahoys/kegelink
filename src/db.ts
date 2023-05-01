@@ -1,5 +1,5 @@
 import Datastore, { DataStoreOptions } from 'nedb';
-import { lp } from 'logscribe';
+import { p } from 'logscribe';
 
 export const getDataStore = (filename: string): Datastore | undefined => {
   try {
@@ -10,7 +10,7 @@ export const getDataStore = (filename: string): Datastore | undefined => {
     };
     return new Datastore(dbTemplate);
   } catch (err) {
-    lp(err);
+    p(err);
     return undefined;
   }
 };
