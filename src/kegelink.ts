@@ -163,7 +163,10 @@ const logInIRC = () => {
             d.ircChannelPw ? `${d.ircChannel} ${d.ircChannelPw}` : d.ircChannel
           );
           if (channels.length) {
-            channels.forEach((ch) => ircClient?.join(ch));
+            p(`Joining to ${channels.length} channels...`);
+            channels.forEach((ch) =>
+              ircClient?.join(ch, () => p(`Joined ${ch}.`))
+            );
           }
         }
       });
