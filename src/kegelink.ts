@@ -167,6 +167,8 @@ const logInIRC = () => {
             channels.forEach((ch) =>
               ircClient?.join(ch, () => p(`Joined ${ch}.`))
             );
+          } else {
+            p('No channels found. See the database.');
           }
         }
       });
