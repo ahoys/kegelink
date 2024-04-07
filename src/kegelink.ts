@@ -1,4 +1,5 @@
 import DiscordJs from 'discord.js';
+import path from 'path';
 import { Client } from 'irc-upd';
 import { config } from 'dotenv';
 import { p } from 'logscribe';
@@ -24,6 +25,7 @@ const mandatoryEnvs = [
   'IRC_REAL_NAME',
   'IRC_ENCODING',
   'IRC_RETRY_DELAY',
+  'DB_HOME',
 ];
 
 mandatoryEnvs.forEach((mEnv) => {
@@ -40,8 +42,9 @@ mandatoryEnvs.forEach((mEnv) => {
 p(envs);
 
 // Let's go and initialize a new Discord client.
-const filtersDb = getDataStore('filters.nedb');
-const linksDb = getDataStore('links.nedb');
+const rootPath = path.resolve(__dirname, envs.DB_HOME);
+const filtersDb = getDataStore(path.resolve(rootPath, 'filters.nedb'));
+const linksDb = getDataStore(path.resolve(rootPath, 'links.nedb'));
 const discordClient = new DiscordJs.Client();
 let ircClient: undefined | Client;
 let previousActionChannelId = '';
